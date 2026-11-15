@@ -1,0 +1,23 @@
+{
+ "last_post_ts": 1794767220.369235,
+ "last_attempt_ts": 1794767214.8981183,
+ "post_log": [
+  1794767220.369235
+ ],
+ "sent_hashes": {
+  "cd16bdc8c41f6b00": 1794767220.369144
+ },
+ "used": {
+  "profile": [
+   "ZEC"
+  ]
+ },
+ "seq": 1,
+ "post_history": [
+  {
+   "ts": 1794767220,
+   "kind": "profile",
+   "coin": "ZEC"
+  }
+ ]
+}
