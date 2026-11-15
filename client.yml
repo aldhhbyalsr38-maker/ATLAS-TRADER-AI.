@@ -1,0 +1,47 @@
+name: Client bot
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"      # a new run is queued every 15 min; each runs ~58 min
+  workflow_dispatch: {}           # manual start button
+
+permissions:
+  contents: write                 # to save client_posted.json (anti-duplicate memory)
+
+concurrency:
+  group: client-bot               # only ONE copy runs at a time
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 62
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run the bot for 58 minutes
+        env:
+          SQUARE_API_KEY: ${{ secrets.SQUARE_API_KEY }}
+          POSTS_PER_DAY: "36"
+          BRAND: "أكاديمية العملات"
+          BRAND_EN: "COIN ACADEMY"
+          # EXCLUDE: "TON,WLD"      # coins to never mention
+          # NEWS: "1"               # optional: news posts with the article's own photo (off by default)
+          # PHOTOS: "0"             # "0" = always use the generated card instead of real photos
+        run: python client_bot.py --duration 58
+
+      - name: Save state
+        if: always()
+        run: |
+          git config user.name "client-bot"
+          git config user.email "client-bot@users.noreply.github.com"
+          git add -f client_posted.json
+          if ! git diff --cached --quiet; then
+            git commit -m "state [skip ci]"
+            git pull --rebase -q || true
+            git push || true
+          fi
